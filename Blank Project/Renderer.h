@@ -4,6 +4,7 @@
 #include "../nclgl/SceneNode.h"
 #include "../nclgl/HeightMap.h"
 #include "../nclgl/ComputeShader.h"
+#include "CPUTerrain.h"
 
 class Renderer : public OGLRenderer	{
 public:
@@ -19,7 +20,7 @@ protected:
 	SceneNode* root;
 	Camera* camera;
 	Shader* shader;
-	HeightMap* heightMap;
+	CPUTerrain* heightMap;
 	GLuint terrainTex;
 
 	void DrawSkybox();

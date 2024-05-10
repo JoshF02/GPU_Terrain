@@ -27,6 +27,8 @@ void main(void){
 	//else newPos = position;
 	newPos = position + vec3(0, 5000 / (dist * 0.1), 0);
 
+	newPos = position;
+
 
 	gl_Position = mvp * vec4(newPos, 1.0);
 	OUT.texCoord = (textureMatrix * vec4(texCoord, 0.0, 1.0)).xy;
