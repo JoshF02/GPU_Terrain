@@ -23,7 +23,7 @@ ComputeShaderTerrain::ComputeShaderTerrain(ComputeShader* computeShader, int siz
 		for (int x = 0; x < iWidth; ++x) {
 			int offset = (z * iWidth) + x;
 
-			GLuint r, g, b, a;
+			GLfloat r, g, b, a;
 
 			size_t elmes_per_line = size * 4;
 
@@ -89,8 +89,9 @@ void ComputeShaderTerrain::WriteToTexture() {
 	glUniform1f(glGetUniformLocation(shader->GetProgram(), "persistence"), 0.8f);
 	glUniform1f(glGetUniformLocation(shader->GetProgram(), "lacunarity"), 1.9f);
 	glUniform2f(glGetUniformLocation(shader->GetProgram(), "offset"), 0.0f, 0.0f);
+	glUniform1i(glGetUniformLocation(shader->GetProgram(), "size"), size);
 
-	shader->Dispatch(size / 16, size / 16, 1);
+	shader->Dispatch(size / 16, size / 16, 1);			// experiment with different layout sizes
 	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 
 	shader->Unbind();

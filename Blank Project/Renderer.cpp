@@ -6,8 +6,8 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent) {	// RENDERER CODE FROM
 	heightmapTex = SOIL_load_OGL_texture(TEXTUREDIR"gradient2.png", 1, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
 	SetTextureRepeating(heightmapTex, true);
 
-	//heightMap = new ComputeShaderTerrain(heightmapShader, 256);
-	heightMap = new CPUTerrain(4096);
+	heightMap = new ComputeShaderTerrain(heightmapShader, 4096);
+	//heightMap = new CPUTerrain(4096);
 	camera = new Camera(-40, 270, Vector3());
 
 	Vector3 dimensions = heightMap->GetTerrainSize();

@@ -1,5 +1,7 @@
 #version 450
 
+precision highp float;
+
 layout (local_size_x = 16, local_size_y = 16) in;
 
 uniform float amplitude;
@@ -8,8 +10,9 @@ uniform int octaves;
 uniform float persistence;
 uniform float lacunarity;
 uniform vec2 offset;
+uniform int size;
 
-layout(binding = 0, rgba8) uniform image2D resultImage;
+layout(binding = 0, rgba32f) uniform image2D resultImage;
 
 
 const int gradientSizeTable = 256;
@@ -70,7 +73,7 @@ void main() {
     permute();
 
     ivec2 globalID = ivec2(gl_GlobalInvocationID.xy);
-    vec2 coords = ((vec2(globalID) / 256) + offset);
+    vec2 coords = ((vec2(globalID) / size) + offset);
 
     float height = 0.0;
     float amp = amplitude;
