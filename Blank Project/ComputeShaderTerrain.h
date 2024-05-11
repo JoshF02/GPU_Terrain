@@ -6,7 +6,7 @@
 class ComputeShaderTerrain : public Mesh
 {
 public:
-	ComputeShaderTerrain(ComputeShader* computeShader);
+	ComputeShaderTerrain(ComputeShader* computeShader, int size);
 	~ComputeShaderTerrain(void) {};
 
 	Vector3 GetTerrainSize() const { return terrainSize; }
@@ -20,6 +20,6 @@ protected:
 
 	GLuint tex;
 	ComputeShader* shader;
-
 	GLfloat* pixels;
+	int size;
 };

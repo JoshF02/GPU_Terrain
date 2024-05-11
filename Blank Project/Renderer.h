@@ -30,7 +30,7 @@ protected:
 	//void WriteToTexture();
 	ComputeShader* heightmapShader;
 	GLuint heightmapTex;
-	GLuint genTex;
+	//GLuint genTex;
 
 	Shader* skyboxShader;
 	GLuint cubeMap;

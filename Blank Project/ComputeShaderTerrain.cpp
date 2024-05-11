@@ -1,11 +1,11 @@
 #include "ComputeShaderTerrain.h"
 #include <iostream>
 
-ComputeShaderTerrain::ComputeShaderTerrain(ComputeShader* computeShader) {
+ComputeShaderTerrain::ComputeShaderTerrain(ComputeShader* computeShader, int size) {
 	shader = computeShader;
-
-	int iWidth = 256;
-	int iHeight = 256;
+	int iWidth = size;
+	int iHeight = size;
+	this->size = size;
 
 	numVertices = iWidth * iHeight;
 	numIndices = (iWidth - 1) * (iHeight - 1) * 6;
@@ -25,7 +25,7 @@ ComputeShaderTerrain::ComputeShaderTerrain(ComputeShader* computeShader) {
 
 			GLuint r, g, b, a;
 
-			size_t elmes_per_line = 256 * 4;
+			size_t elmes_per_line = size * 4;
 
 			size_t row = z * elmes_per_line;
 			size_t col = x * 4;
@@ -71,7 +71,7 @@ void ComputeShaderTerrain::WriteToTexture() {
 	glGenTextures(1, &tex);
 	glBindTexture(GL_TEXTURE_2D, tex);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, 256, 256, 0, GL_RGBA, GL_FLOAT, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, size, size, 0, GL_RGBA, GL_FLOAT, 0);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glGenerateMipmap(GL_TEXTURE_2D);
@@ -90,7 +90,7 @@ void ComputeShaderTerrain::WriteToTexture() {
 	glUniform1f(glGetUniformLocation(shader->GetProgram(), "lacunarity"), 1.9f);
 	glUniform2f(glGetUniformLocation(shader->GetProgram(), "offset"), 0.0f, 0.0f);
 
-	shader->Dispatch(256 / 16, 256 / 16, 1);
+	shader->Dispatch(size / 16, size / 16, 1);
 	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 
 	shader->Unbind();
@@ -99,7 +99,7 @@ void ComputeShaderTerrain::WriteToTexture() {
 void ComputeShaderTerrain::ReadFromTexture() {
 	glBindTexture(GL_TEXTURE_2D, tex);
 
-	pixels = new GLfloat[256 * 256 * 4];
+	pixels = new GLfloat[size * size * 4];
 
 	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, pixels);
 

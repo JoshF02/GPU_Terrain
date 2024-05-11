@@ -1,7 +1,7 @@
 #include "CPUTerrain.h"
 #include <iostream>
 
-CPUTerrain::CPUTerrain() {
+CPUTerrain::CPUTerrain(int size) {
 	/*int iWidth, iHeight, iChans;
 	unsigned char* data = SOIL_load_image(name.c_str(), &iWidth, &iHeight, &iChans, 1);
 
@@ -9,8 +9,8 @@ CPUTerrain::CPUTerrain() {
 		std::cout << "Heightmap can't load file!\n";
 		return;
 	}*/
-	int iWidth = 513;
-	int iHeight = 513;
+	int iWidth = size;
+	int iHeight = size;
 	PerlinNoise perlin;
 
 	numVertices = iWidth * iHeight;

@@ -5,7 +5,7 @@
 class CPUTerrain : public Mesh
 {
 public:
-	CPUTerrain();
+	CPUTerrain(int size);
 	~CPUTerrain(void) {};
 
 	Vector3 GetTerrainSize() const { return terrainSize; }
