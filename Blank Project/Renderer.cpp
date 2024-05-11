@@ -179,9 +179,9 @@ void Renderer::DrawSkybox() {
 void Renderer::ReadFromTexture() {
 	glBindTexture(GL_TEXTURE_2D, genTex);
 	
-	GLfloat* pixels = new GLfloat[256 * 256 * 1];
+	GLfloat* pixels = new GLfloat[256 * 256 * 4];
 
-	glGetTexImage(GL_TEXTURE_2D, 0, GL_RED, GL_FLOAT, pixels);
+	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, pixels);
 
 	int w, h;
 	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &w);
@@ -208,13 +208,13 @@ void Renderer::ReadFromTexture() {
 		GLuint gray = (GLuint)((r + g + b) / 3.0);
 		std::cout << gray << std::endl;*/
 		size_t y = 128;
-		size_t elmes_per_line = 256 * 1;
+		size_t elmes_per_line = 256 * 4;
 
-		size_t row = x * elmes_per_line;
-		size_t col = y * 1;
+		size_t row = y * elmes_per_line;
+		size_t col = x * 4;
 
 		GLfloat val = pixels[row + col];
-		std::cout << val << std::endl;
+		std::cout << val << " , " << pixels[row + col + 1] << " , " << pixels[row + col + 2] << " , " << pixels[row + col + 3] << std::endl;
 
 	}
 }
@@ -237,7 +237,7 @@ void Renderer::WriteToTexture() {
 
 	//glUniform1f(glGetUniformLocation(heightmapShader->GetProgram(), "scale"), 0.45);
 	//glUniform1f(glGetUniformLocation(heightmapShader->GetProgram(), "dims"), 256.0f);
-	glUniform1f(glGetUniformLocation(heightmapShader->GetProgram(), "amplitude"), 1.0f);
+	glUniform1f(glGetUniformLocation(heightmapShader->GetProgram(), "amplitude"), 500.0f);
 	glUniform1f(glGetUniformLocation(heightmapShader->GetProgram(), "frequency"), 0.1f);
 	glUniform1i(glGetUniformLocation(heightmapShader->GetProgram(), "octaves"), 8);
 	glUniform1f(glGetUniformLocation(heightmapShader->GetProgram(), "persistence"), 0.8f);

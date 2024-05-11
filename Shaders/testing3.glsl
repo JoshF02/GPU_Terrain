@@ -129,7 +129,7 @@ void main() {
     ivec2 imgSize = imageSize(resultImage);
     ivec2 flippedCoord = ivec2(globalID.x, imgSize.y - globalID.y - 1); // Flip Y coordinate
 
-    imageStore(resultImage, globalID, vec4(height, height, height, 1.0));
+    imageStore(resultImage, globalID, vec4(globalID.x, height, globalID.y, 1.0));
 
     //imageStore(resultImage, globalID, vec4(0.687,0.687,0.687,0.449));
 }
