@@ -84,7 +84,7 @@ void ComputeShaderTerrain::WriteToTexture() {
 	glBindImageTexture(imageUnitIndex, tex, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
 
 	glUniform1f(glGetUniformLocation(shader->GetProgram(), "amplitude"), 500.0f);
-	glUniform1f(glGetUniformLocation(shader->GetProgram(), "frequency"), 0.1f);
+	glUniform1f(glGetUniformLocation(shader->GetProgram(), "frequency"), 0.1f * ((float)size / 256));
 	glUniform1i(glGetUniformLocation(shader->GetProgram(), "octaves"), 8);
 	glUniform1f(glGetUniformLocation(shader->GetProgram(), "persistence"), 0.8f);
 	glUniform1f(glGetUniformLocation(shader->GetProgram(), "lacunarity"), 1.9f);

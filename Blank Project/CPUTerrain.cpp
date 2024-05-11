@@ -2,13 +2,6 @@
 #include <iostream>
 
 CPUTerrain::CPUTerrain(int size) {
-	/*int iWidth, iHeight, iChans;
-	unsigned char* data = SOIL_load_image(name.c_str(), &iWidth, &iHeight, &iChans, 1);
-
-	if (!data) {
-		std::cout << "Heightmap can't load file!\n";
-		return;
-	}*/
 	int iWidth = size;
 	int iHeight = size;
 	PerlinNoise perlin;
@@ -25,11 +18,10 @@ CPUTerrain::CPUTerrain(int size) {
 	for (int z = 0; z < iHeight; ++z) {
 		for (int x = 0; x < iWidth; ++x) {
 			int offset = (z * iWidth) + x;
-			//vertices[offset] = Vector3(x, data[offset], z) * vertexScale;
 
 			float height = 0.0;
 			float amplitude = 500.0;
-			float frequency = 0.1;
+			float frequency = 0.1f * ((float)size / 256);	// scales with terrain size
 			int octaves = 8;
 			float persistence = 0.8;
 			float lacunarity = 1.9;
@@ -43,13 +35,10 @@ CPUTerrain::CPUTerrain(int size) {
 				frequency *= lacunarity;
 			}
 
-
-			//std::cout << "HEIGHT: " << height << std::endl;
 			vertices[offset] = Vector3(x, height, z) * vertexScale;
 			textureCoords[offset] = Vector2(x, z) * textureScale;
 		}
 	}
-	//SOIL_free_image_data(data);
 
 	int i = 0;
 

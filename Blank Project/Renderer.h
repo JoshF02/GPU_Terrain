@@ -21,16 +21,14 @@ protected:
 	SceneNode* root;
 	Camera* camera;
 	Shader* shader;
-	ComputeShaderTerrain* heightMap;
+	//ComputeShaderTerrain* heightMap;
+	CPUTerrain* heightMap;
 	GLuint terrainTex;
 
 	void DrawSkybox();
 
-	//void ReadFromTexture();
-	//void WriteToTexture();
 	ComputeShader* heightmapShader;
 	GLuint heightmapTex;
-	//GLuint genTex;
 
 	Shader* skyboxShader;
 	GLuint cubeMap;

@@ -2,11 +2,12 @@
 
 Renderer::Renderer(Window& parent) : OGLRenderer(parent) {	// RENDERER CODE FROM T8 (TERRAIN)
 
-	heightmapShader = new ComputeShader("testing3.glsl");
+	heightmapShader = new ComputeShader("PerlinCS.glsl");
 	heightmapTex = SOIL_load_OGL_texture(TEXTUREDIR"gradient2.png", 1, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
 	SetTextureRepeating(heightmapTex, true);
 
-	heightMap = new ComputeShaderTerrain(heightmapShader, 256);
+	//heightMap = new ComputeShaderTerrain(heightmapShader, 256);
+	heightMap = new CPUTerrain(4096);
 	camera = new Camera(-40, 270, Vector3());
 
 	Vector3 dimensions = heightMap->GetTerrainSize();
@@ -48,16 +49,6 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent) {	// RENDERER CODE FROM
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
 	quad = Mesh::GenerateQuad();
-
-
-
-
-
-
-	
-
-	//WriteToTexture();
-	//ReadFromTexture();
 }
 
 Renderer::~Renderer(void) {
@@ -126,131 +117,3 @@ void Renderer::DrawSkybox() {
 	quad->Draw();
 	glDepthMask(GL_TRUE);
 }
-
-
-
-
-
-
-
-/*void Renderer::ReadFromTexture() {
-	glBindTexture(GL_TEXTURE_2D, genTex);
-	
-	GLfloat* pixels = new GLfloat[256 * 256 * 4];
-
-	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, pixels);
-
-	int w, h;
-	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &w);
-	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &h);
-
-	std::cout << "size: " << w << " , " << h << std::endl;
-
-
-
-	for (size_t x = 0; x < 256; ++x) {
-		size_t y = 128;
-		size_t elmes_per_line = 256 * 4;
-
-		size_t row = y * elmes_per_line;
-		size_t col = x * 4;
-
-		GLfloat val = pixels[row + col];
-		std::cout << val << " , " << pixels[row + col + 1] << " , " << pixels[row + col + 2] << " , " << pixels[row + col + 3] << std::endl;
-
-	}
-}
-
-void Renderer::WriteToTexture() {
-	glGenTextures(1, &genTex);
-	glBindTexture(GL_TEXTURE_2D, genTex);
-
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, 256, 256, 0, GL_RGBA, GL_FLOAT, 0);	// changed from GL_RGBA8 here + below
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glGenerateMipmap(GL_TEXTURE_2D);
-
-
-	heightmapShader->Bind();
-
-	int imageUnitIndex = 0;
-	glUniform1i(glGetUniformLocation(heightmapShader->GetProgram(), "resultImage"), imageUnitIndex);
-	glBindImageTexture(imageUnitIndex, genTex, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
-
-	//glUniform1f(glGetUniformLocation(heightmapShader->GetProgram(), "scale"), 0.45);
-	//glUniform1f(glGetUniformLocation(heightmapShader->GetProgram(), "dims"), 256.0f);
-	glUniform1f(glGetUniformLocation(heightmapShader->GetProgram(), "amplitude"), 500.0f);
-	glUniform1f(glGetUniformLocation(heightmapShader->GetProgram(), "frequency"), 0.1f);
-	glUniform1i(glGetUniformLocation(heightmapShader->GetProgram(), "octaves"), 8);
-	glUniform1f(glGetUniformLocation(heightmapShader->GetProgram(), "persistence"), 0.8f);
-	glUniform1f(glGetUniformLocation(heightmapShader->GetProgram(), "lacunarity"), 1.9f);
-	glUniform2f(glGetUniformLocation(heightmapShader->GetProgram(), "offset"), 0.0f, 0.0f);
-
-	//glUniform1iv(glGetUniformLocation(heightmapShader->GetProgram(), "perm"), 512, permValues);
-
-	heightmapShader->Dispatch(256 / 16, 256 / 16, 1);
-	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
-
-	heightmapShader->Unbind();
-}*/
-
-
-
-
-
-
-
-/*void saveImage(const std::string& filename, int width, int height, const std::vector<float>& data) {
-	std::ofstream file(filename, std::ios::binary);
-	if (!file.is_open()) {
-		std::cerr << "Failed to open file for writing: " << filename << std::endl;
-		return;
-	}
-
-	file << "P6\n" << width << " " << height << "\n255\n";
-
-	for (size_t i = 0; i < data.size(); ++i) {
-		unsigned char color = static_cast<unsigned char>(data[i] * 255.0f);
-		file << color << color << color;
-	}
-
-	file.close();
-}*/
-
-void ImageSaving() {
-	/*int widthtt, heighttt, channelstt;
-	unsigned char* ht_map = SOIL_load_image
-	(
-		TEXTUREDIR"noise.png",
-		&widthtt, &heighttt, &channelstt,
-		SOIL_LOAD_L
-	);
-
-	int save_result = SOIL_save_image
-	(
-		TEXTUREDIR"noise.bmp",
-		SOIL_SAVE_TYPE_BMP,
-		widthtt, heighttt, channelstt,
-		ht_map
-	);
-	//heightmapShader->Bind();
-
-
-	//std::vector<unsigned char> imageData(512 * 512 * 4);
-	/*unsigned char* imageData = new unsigned char[512 * 512 * 4];
-	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, imageData);
-
-	if (SOIL_save_image(TEXTUREDIR"perlin_noise_test.bmp", SOIL_SAVE_TYPE_BMP, 512, 512, 4, imageData) == 0) {
-		std::cerr << "Failed to save image" << std::endl;
-	}*/
-
-	/*std::vector<float> imageData(512 * 512 * 4);
-	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, imageData.data());
-
-	// Save image to file
-	saveImage(TEXTUREDIR"perlin_noise.ppm", 512, 512, imageData);*/
-}
-
-
-
-
