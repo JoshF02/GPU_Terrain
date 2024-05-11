@@ -136,11 +136,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ComputeShaderTerrain.cpp" />
     <ClCompile Include="Coursework Scene.cpp" />
     <ClCompile Include="CPUTerrain.cpp" />
     <ClCompile Include="Renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ComputeShaderTerrain.h" />
     <ClInclude Include="CPUTerrain.h" />
     <ClInclude Include="Renderer.h" />
   </ItemGroup>

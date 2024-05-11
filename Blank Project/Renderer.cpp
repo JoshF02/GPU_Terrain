@@ -1,7 +1,12 @@
 #include "Renderer.h"
 
 Renderer::Renderer(Window& parent) : OGLRenderer(parent) {	// RENDERER CODE FROM T8 (TERRAIN)
-	heightMap = new CPUTerrain();
+
+	heightmapShader = new ComputeShader("testing3.glsl");
+	heightmapTex = SOIL_load_OGL_texture(TEXTUREDIR"gradient2.png", 1, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
+	SetTextureRepeating(heightmapTex, true);
+
+	heightMap = new ComputeShaderTerrain(heightmapShader);
 	camera = new Camera(-40, 270, Vector3());
 
 	Vector3 dimensions = heightMap->GetTerrainSize();
@@ -49,12 +54,10 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent) {	// RENDERER CODE FROM
 
 
 
-	heightmapShader = new ComputeShader("testing3.glsl");
-	heightmapTex = SOIL_load_OGL_texture(TEXTUREDIR"gradient2.png", 1, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
-	SetTextureRepeating(heightmapTex, true);
+	
 
-	WriteToTexture();
-	ReadFromTexture();
+	//WriteToTexture();
+	//ReadFromTexture();
 }
 
 Renderer::~Renderer(void) {
@@ -70,56 +73,10 @@ Renderer::~Renderer(void) {
 	//glDeleteTextures(1, &heightmapTex);
 }
 
-/*const int WIDTH = 10;
-const int HEIGHT = 10;
-const int SIZETT = 10 * 10;
-
-// Function to generate terrain heightmap using Perlin noise
-void generateTerrainHeightmap(float frequency, float amplitude, int octaves, float heightmap[SIZETT]) {
-	PerlinNoise noise; // Initialize FastNoise object
-
-	int index = 0;
-	for (int x = 0; x < WIDTH; ++x) {
-		for (int y = 0; y < HEIGHT; ++y) {
-			float noiseValue = 0.0f;
-			float amp = amplitude;
-			float freq = frequency;
-			for (int o = 0; o < octaves; ++o) {
-				noiseValue += noise.noise((float)x * freq, (float)y * freq) * amp;
-				freq *= 2.0f; // Increase frequency for each octave
-				amp *= 0.5f; // Decrease amplitude for each octave
-			}
-			heightmap[index++] = noiseValue;
-		}
-	}
-}*/
-
 void Renderer::UpdateScene(float dt) {
 	camera->UpdateCamera(dt);
 	viewMatrix = camera->BuildViewMatrix();
 	root->Update(dt);
-
-	/*PerlinNoise perlin;
-
-	// Example usage:
-	double x = 0.5775;
-	double y = 0.9556;
-	double noiseValue = perlin.noise(x, y);
-
-	std::cout << "Perlin noise value at (" << x << ", " << y << "): " << noiseValue << std::endl;*/
-	
-	/*float* heightmap = new float[SIZETT];
-
-	generateTerrainHeightmap(0.05f, 10.0f, 4, heightmap);
-
-	// Output the heightmap (for demonstration purposes)
-	for (int i = 0; i < SIZETT; ++i) {
-		std::cout << heightmap[i] << " ";
-		if ((i + 1) % WIDTH == 0) {
-			std::cout << std::endl;
-		}
-	}*/
-
 }
 
 void Renderer::RenderScene() {
@@ -176,7 +133,7 @@ void Renderer::DrawSkybox() {
 
 
 
-void Renderer::ReadFromTexture() {
+/*void Renderer::ReadFromTexture() {
 	glBindTexture(GL_TEXTURE_2D, genTex);
 	
 	GLfloat* pixels = new GLfloat[256 * 256 * 4];
@@ -192,21 +149,6 @@ void Renderer::ReadFromTexture() {
 
 
 	for (size_t x = 0; x < 256; ++x) {
-		/*GLuint r, g, b, a;
-
-		size_t y = 128;
-		size_t elmes_per_line = 256 * 4;
-
-		size_t row = y * elmes_per_line;
-		size_t col = x * 4;
-
-		r = pixels[row + col];
-		g = pixels[row + col + 1];
-		b = pixels[row + col + 2];
-		a = pixels[row + col + 3];
-
-		GLuint gray = (GLuint)((r + g + b) / 3.0);
-		std::cout << gray << std::endl;*/
 		size_t y = 128;
 		size_t elmes_per_line = 256 * 4;
 
@@ -244,50 +186,13 @@ void Renderer::WriteToTexture() {
 	glUniform1f(glGetUniformLocation(heightmapShader->GetProgram(), "lacunarity"), 1.9f);
 	glUniform2f(glGetUniformLocation(heightmapShader->GetProgram(), "offset"), 0.0f, 0.0f);
 
-	/*int permValues[] = {151, 160, 137, 91, 90, 15, 131, 13, 201, 95, 96, 53, 194, 233, 7, 225,
-						  140, 36, 103, 30, 69, 142, 8, 99, 37, 240, 21, 10, 23, 190, 6, 148,
-						  247, 120, 234, 75, 0, 26, 197, 62, 94, 252, 219, 203, 117, 35, 11, 32,
-						  57, 177, 33, 88, 237, 149, 56, 87, 174, 20, 125, 136, 171, 168, 68, 175,
-						  74, 165, 71, 134, 139, 48, 27, 166, 77, 146, 158, 231, 83, 111, 229, 122,
-						  60, 211, 133, 230, 220, 105, 92, 41, 55, 46, 245, 40, 244, 102, 143, 54,
-						  65, 25, 63, 161, 1, 216, 80, 73, 209, 76, 132, 187, 208, 89, 18, 169,
-						  200, 196, 135, 130, 116, 188, 159, 86, 164, 100, 109, 198, 173, 186, 3,
-						  64, 52, 217, 226, 250, 124, 123, 5, 202, 38, 147, 118, 126, 255, 82,
-						  85, 212, 207, 206, 59, 227, 47, 16, 58, 17, 182, 189, 28, 42, 223,
-						  183, 170, 213, 119, 248, 152, 2, 44, 154, 163, 70, 221, 153, 101, 155,
-						  167, 43, 172, 9, 129, 22, 39, 253, 19, 98, 108, 110, 79, 113, 224,
-						  232, 178, 185, 112, 104, 218, 246, 97, 228, 251, 34, 242, 193, 238,
-						  210, 144, 12, 191, 179, 162, 241, 81, 51, 145, 235, 249, 14, 239,
-						  107, 49, 192, 214, 31, 181, 199, 106, 157, 184, 84, 204, 176, 115,
-						  121, 50, 45, 127, 4, 150, 254, 138, 236, 205, 93, 222, 114, 67, 29,
-						  24, 72, 243, 141, 128, 195, 78, 66, 215, 61, 156, 180,
-
-						151, 160, 137, 91, 90, 15, 131, 13, 201, 95, 96, 53, 194, 233, 7, 225,
-						  140, 36, 103, 30, 69, 142, 8, 99, 37, 240, 21, 10, 23, 190, 6, 148,
-						  247, 120, 234, 75, 0, 26, 197, 62, 94, 252, 219, 203, 117, 35, 11, 32,
-						  57, 177, 33, 88, 237, 149, 56, 87, 174, 20, 125, 136, 171, 168, 68, 175,
-						  74, 165, 71, 134, 139, 48, 27, 166, 77, 146, 158, 231, 83, 111, 229, 122,
-						  60, 211, 133, 230, 220, 105, 92, 41, 55, 46, 245, 40, 244, 102, 143, 54,
-						  65, 25, 63, 161, 1, 216, 80, 73, 209, 76, 132, 187, 208, 89, 18, 169,
-						  200, 196, 135, 130, 116, 188, 159, 86, 164, 100, 109, 198, 173, 186, 3,
-						  64, 52, 217, 226, 250, 124, 123, 5, 202, 38, 147, 118, 126, 255, 82,
-						  85, 212, 207, 206, 59, 227, 47, 16, 58, 17, 182, 189, 28, 42, 223,
-						  183, 170, 213, 119, 248, 152, 2, 44, 154, 163, 70, 221, 153, 101, 155,
-						  167, 43, 172, 9, 129, 22, 39, 253, 19, 98, 108, 110, 79, 113, 224,
-						  232, 178, 185, 112, 104, 218, 246, 97, 228, 251, 34, 242, 193, 238,
-						  210, 144, 12, 191, 179, 162, 241, 81, 51, 145, 235, 249, 14, 239,
-						  107, 49, 192, 214, 31, 181, 199, 106, 157, 184, 84, 204, 176, 115,
-						  121, 50, 45, 127, 4, 150, 254, 138, 236, 205, 93, 222, 114, 67, 29,
-						  24, 72, 243, 141, 128, 195, 78, 66, 215, 61, 156, 180
-	};
-
-	glUniform1iv(glGetUniformLocation(heightmapShader->GetProgram(), "perm"), 512, permValues);*/
+	//glUniform1iv(glGetUniformLocation(heightmapShader->GetProgram(), "perm"), 512, permValues);
 
 	heightmapShader->Dispatch(256 / 16, 256 / 16, 1);
 	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 
 	heightmapShader->Unbind();
-}
+}*/
 
 
 
