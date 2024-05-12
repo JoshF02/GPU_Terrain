@@ -4,7 +4,7 @@
 CPUTerrain::CPUTerrain(int size) {
 	int iWidth = size;
 	int iHeight = size;
-	PerlinNoise perlin;
+	Noise noise;
 
 	numVertices = iWidth * iHeight;
 	numIndices = (iWidth - 1) * (iHeight - 1) * 6;
@@ -30,7 +30,7 @@ CPUTerrain::CPUTerrain(int size) {
 
 			for (int i = 0; i <= octaves; i++) {
 				Vector2 coord = Vector2((((float)x / iWidth) + noiseOffset) * frequency, (((float)z / iHeight) + noiseOffset) * frequency);
-				height += perlin.noise(coord.x, coord.y) * amplitude;
+				height += noise.Simplex(coord.x, coord.y) * amplitude;
 				amplitude *= persistence;
 				frequency *= lacunarity;
 			}

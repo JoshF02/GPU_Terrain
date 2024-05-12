@@ -21,8 +21,8 @@ protected:
 	SceneNode* root;
 	Camera* camera;
 	Shader* shader;
-	ComputeShaderTerrain* heightMap;
-	//CPUTerrain* heightMap;
+	//ComputeShaderTerrain* heightMap;
+	CPUTerrain* heightMap;
 	GLuint terrainTex;
 
 	void DrawSkybox();

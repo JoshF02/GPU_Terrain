@@ -69,22 +69,22 @@ float noise(float x, float y) {
     return mix(mix(grad(perm[A], x, y), grad(perm[B], x - 1, y), u), 
                 mix(grad(perm[A + 1], x, y - 1), grad(perm[B + 1], x - 1, y - 1), u), v);*/
     
-    float xin = x / float(size) - 0.5;
-    float yin = y / float(size) - 0.5;
+    //float xin = x / float(size) - 0.5;
+    //float yin = y / float(size) - 0.5;
     
     float F2 = 0.5 * (sqrt(3.0) - 1.0);
-    float s = (xin + yin) * F2;
+    float s = (x + y) * F2;
 
-    int i = int(floor(xin + s));
-    int j = int(floor(yin + s));
+    int i = int(floor(x + s));
+    int j = int(floor(y + s));
 
     float G2 = (3.0 - sqrt(3.0)) / 6.0;
     float t = float(i + j) * G2;
 
     float X0 = float(i) - t;
     float Y0 = float(j) - t;
-    float x0 = xin - X0;
-    float y0 = yin - Y0;
+    float x0 = x - X0;
+    float y0 = y - Y0;
 
     int i1, j1;
     if (x0 > y0) { i1 = 1; j1 = 0; }
