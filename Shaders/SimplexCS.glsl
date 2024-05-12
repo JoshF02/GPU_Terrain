@@ -15,6 +15,12 @@ uniform int size;
 layout(binding = 0, rgba32f) uniform image2D resultImage;
 
 
+const vec3 grad3[12] = vec3[12](
+    vec3(1, 1, 0), vec3(-1, 1, 0), vec3(1, -1, 0), vec3(-1, -1, 0),
+    vec3(1, 0, 1), vec3(-1, 0, 1), vec3(1, 0, -1), vec3(-1, 0, -1),
+    vec3(0, 1, 1), vec3(0, -1, 1), vec3(0, 1, -1), vec3(0, -1, -1)
+);
+
 const int gradientSizeTable = 256;
 int perm[gradientSizeTable * 2];
 
@@ -36,12 +42,7 @@ void permute() {
 
 float fade(float t) {
     return t * t * t * (t * (t * 6.0 - 15.0) + 10.0);
-    //return t * t * (3.0 - 2.0 * t);
 }
-
-/*float lerp(float t, float a, float b) {
-    return a + t * (b - a);
-}*/
 
 float grad(int hash, float x, float y) {
     int h = hash & 7;      
@@ -53,7 +54,7 @@ float grad(int hash, float x, float y) {
 
 
 float noise(float x, float y) {
-    int X = int(floor(x)) & (gradientSizeTable - 1);
+    /*int X = int(floor(x)) & (gradientSizeTable - 1);
     int Y = int(floor(y)) & (gradientSizeTable - 1);
 
     x -= floor(x);
@@ -66,7 +67,65 @@ float noise(float x, float y) {
     int B = perm[X + 1] + Y;
 
     return mix(mix(grad(perm[A], x, y), grad(perm[B], x - 1, y), u), 
-                mix(grad(perm[A + 1], x, y - 1), grad(perm[B + 1], x - 1, y - 1), u), v);
+                mix(grad(perm[A + 1], x, y - 1), grad(perm[B + 1], x - 1, y - 1), u), v);*/
+    
+    float xin = x / float(size) - 0.5;
+    float yin = y / float(size) - 0.5;
+    
+    float F2 = 0.5 * (sqrt(3.0) - 1.0);
+    float s = (xin + yin) * F2;
+
+    int i = int(floor(xin + s));
+    int j = int(floor(yin + s));
+
+    float G2 = (3.0 - sqrt(3.0)) / 6.0;
+    float t = float(i + j) * G2;
+
+    float X0 = float(i) - t;
+    float Y0 = float(j) - t;
+    float x0 = xin - X0;
+    float y0 = yin - Y0;
+
+    int i1, j1;
+    if (x0 > y0) { i1 = 1; j1 = 0; }
+    else { i1 = 0; j1 = 1; }
+
+    float x1 = x0 - float(i1) + G2;
+    float y1 = y0 - float(j1) + G2;
+    float x2 = x0 - 1.0 + 2.0 * G2;
+    float y2 = y0 - 1.0 + 2.0 * G2;
+
+    int ii = i & 255;
+    int jj = j & 255;
+
+    int gi0 = perm[ii + perm[jj]] % 12;
+    int gi1 = perm[ii + i1 + perm[jj + j1]] % 12;
+    int gi2 = perm[ii + 1 + perm[jj + 1]] % 12;
+    
+    float n0, n1, n2;
+
+    float t0 = 0.5 - x0 * x0 - y0 * y0;
+    if (t0 < 0.0) n0 = 0.0;
+    else {
+        t0 *= t0;
+        n0 = t0 * t0 * grad(gi0, x0, y0);
+    }
+
+    float t1 = 0.5 - x1 * x1 - y1 * y1;
+    if (t1 < 0.0) n1 = 0.0;
+    else {
+        t1 *= t1;
+        n1 = t1 * t1 * grad(gi1, x1, y1);
+    }
+
+    float t2 = 0.5 - x2 * x2 - y2 * y2;
+    if (t2 < 0.0) n2 = 0.0;
+    else {
+        t2 *= t2;
+        n2 = t2 * t2 * grad(gi2, x2, y2);
+    }
+
+    return 70.0 * (n0 + n1 + n2);
 }
 
 void main() {
