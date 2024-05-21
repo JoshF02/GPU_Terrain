@@ -30,7 +30,7 @@ CPUTerrain::CPUTerrain(int size) {
 
 			for (int i = 0; i <= octaves; i++) {
 				Vector2 coord = Vector2((((float)x / iWidth) + noiseOffset) * frequency, (((float)z / iHeight) + noiseOffset) * frequency);
-				height += noise.Simplex(coord.x, coord.y) * amplitude;
+				height += noise.Perlin(coord.x, coord.y) * amplitude;
 				amplitude *= persistence;
 				frequency *= lacunarity;
 			}
