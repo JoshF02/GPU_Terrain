@@ -12,6 +12,8 @@ uniform float lacunarity;
 uniform vec2 offset;
 uniform int size;
 
+uniform int perm256[256];
+
 layout(binding = 0, rgba32f) uniform image2D resultImage;
 
 
@@ -19,7 +21,7 @@ const int gradientSizeTable = 256;
 int perm[gradientSizeTable * 2];
 
 void permute() {
-    for (int i = 0; i < gradientSizeTable; ++i) {
+    /*for (int i = 0; i < gradientSizeTable; ++i) {
         perm[i] = i;
     }
     for (int i = 0; i < gradientSizeTable; ++i) {
@@ -30,6 +32,11 @@ void permute() {
     }
     for (int i = 0; i < gradientSizeTable; ++i) {
         perm[i + gradientSizeTable] = perm[i];
+    }*/
+
+    for (int i = 0; i < gradientSizeTable; ++i) {
+        perm[i] = perm256[i];
+        perm[i + gradientSizeTable] = perm256[i];
     }
 }
 

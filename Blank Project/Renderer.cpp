@@ -1,4 +1,6 @@
 #include "Renderer.h"
+#include <chrono>
+#include <iomanip>
 
 Renderer::Renderer(Window& parent) : OGLRenderer(parent) {	// RENDERER CODE FROM T8 (TERRAIN)
 
@@ -6,8 +8,15 @@ Renderer::Renderer(Window& parent) : OGLRenderer(parent) {	// RENDERER CODE FROM
 	heightmapTex = SOIL_load_OGL_texture(TEXTUREDIR"gradient2.png", 1, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
 	SetTextureRepeating(heightmapTex, true);
 
-	//heightMap = new ComputeShaderTerrain(heightmapShader, 1024);
-	heightMap = new CPUTerrain(1024);
+	auto start = std::chrono::high_resolution_clock::now();
+
+	//heightMap = new ComputeShaderTerrain(heightmapShader, 2048);
+	heightMap = new CPUTerrain(2048);
+
+	auto stop = std::chrono::high_resolution_clock::now();
+	double duration = std::chrono::duration_cast<std::chrono::nanoseconds>(stop - start).count() * 1e-9;
+	std::cout << "Time taken by function: " << std::fixed << std::setprecision(9) << duration << " seconds" << std::endl;
+
 	camera = new Camera(-40, 270, Vector3());
 
 	Vector3 dimensions = heightMap->GetTerrainSize();
