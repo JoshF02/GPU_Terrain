@@ -33,7 +33,6 @@ ComputeShaderTerrain::ComputeShaderTerrain(ComputeShader* computeShader, int siz
 			r = pixels[row + col];
 			g = pixels[row + col + 1];
 			b = pixels[row + col + 2];
-			//a = pixels[row + col + 3];
 			
 			vertices[offset] = Vector3(r, g, b) * vertexScale;
 			textureCoords[offset] = Vector2(x, z) * textureScale;
@@ -100,10 +99,6 @@ void ComputeShaderTerrain::WriteToTexture() {
 							184, 84, 204, 176, 115, 121, 50, 45, 127, 4, 150, 254, 138, 236, 205, 93,
 							222, 114, 67, 29, 24, 72, 243, 141, 128, 195, 78, 66, 215, 61, 156, 180 };
 
-	/*GLint maxVertexUniformComponents;
-	glGetIntegerv(GL_MAX_COMPUTE_UNIFORM_COMPONENTS, &maxVertexUniformComponents);
-	std::cout << "Max vertex uniform components: " << maxVertexUniformComponents << std::endl;*/
-
 	glUniform1iv(glGetUniformLocation(shader->GetProgram(), "perm256"), 256, perm);
 
 	glUniform1f(glGetUniformLocation(shader->GetProgram(), "amplitude"), 500.0f);
@@ -114,7 +109,7 @@ void ComputeShaderTerrain::WriteToTexture() {
 	glUniform2f(glGetUniformLocation(shader->GetProgram(), "offset"), 0.0f, 0.0f);
 	glUniform1i(glGetUniformLocation(shader->GetProgram(), "size"), size);
 
-	shader->Dispatch(size / 16, size / 16, 1);			// experiment with different layout sizes
+	shader->Dispatch(size / 16, size / 16, 1);
 	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 
 	shader->Unbind();
@@ -126,10 +121,4 @@ void ComputeShaderTerrain::ReadFromTexture() {
 	pixels = new GLfloat[size * size * 4];
 
 	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, pixels);
-
-	/*int w, h;
-	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &w);
-	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &h);*/
-
-	//std::cout << "size: " << w << " , " << h << std::endl;
 }

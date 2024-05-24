@@ -21,19 +21,6 @@ const int gradientSizeTable = 256;
 int perm[gradientSizeTable * 2];
 
 void permute() {
-    /*for (int i = 0; i < gradientSizeTable; ++i) {
-        perm[i] = i;
-    }
-    for (int i = 0; i < gradientSizeTable; ++i) {
-        int j = int(mod(float(perm[i]) * 1.618033988749895, float(gradientSizeTable)));
-        int temp = perm[i];
-        perm[i] = perm[j];
-        perm[j] = temp;
-    }
-    for (int i = 0; i < gradientSizeTable; ++i) {
-        perm[i + gradientSizeTable] = perm[i];
-    }*/
-
     for (int i = 0; i < gradientSizeTable; ++i) {
         perm[i] = perm256[i];
         perm[i + gradientSizeTable] = perm256[i];
@@ -43,12 +30,8 @@ void permute() {
 
 float fade(float t) {
     return t * t * t * (t * (t * 6.0 - 15.0) + 10.0);
-    //return t * t * (3.0 - 2.0 * t);
 }
 
-/*float lerp(float t, float a, float b) {
-    return a + t * (b - a);
-}*/
 
 float grad(int hash, float x, float y) {
     int h = hash & 7;      
@@ -56,7 +39,6 @@ float grad(int hash, float x, float y) {
     float v = h < 4 ? y : x;
     return ((h & 1) == 0 ? u : -u) + ((h & 2) == 0 ? v : -v);
 }
-
 
 
 float noise(float x, float y) {

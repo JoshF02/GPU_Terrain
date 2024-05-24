@@ -12,30 +12,18 @@ uniform float lacunarity;
 uniform vec2 offset;
 uniform int size;
 
+uniform int perm256[256];
+
 layout(binding = 0, rgba32f) uniform image2D resultImage;
 
-
-const vec3 grad3[12] = vec3[12](
-    vec3(1, 1, 0), vec3(-1, 1, 0), vec3(1, -1, 0), vec3(-1, -1, 0),
-    vec3(1, 0, 1), vec3(-1, 0, 1), vec3(1, 0, -1), vec3(-1, 0, -1),
-    vec3(0, 1, 1), vec3(0, -1, 1), vec3(0, 1, -1), vec3(0, -1, -1)
-);
 
 const int gradientSizeTable = 256;
 int perm[gradientSizeTable * 2];
 
 void permute() {
     for (int i = 0; i < gradientSizeTable; ++i) {
-        perm[i] = i;
-    }
-    for (int i = 0; i < gradientSizeTable; ++i) {
-        int j = int(mod(float(perm[i]) * 1.618033988749895, float(gradientSizeTable)));
-        int temp = perm[i];
-        perm[i] = perm[j];
-        perm[j] = temp;
-    }
-    for (int i = 0; i < gradientSizeTable; ++i) {
-        perm[i + gradientSizeTable] = perm[i];
+        perm[i] = perm256[i];
+        perm[i + gradientSizeTable] = perm256[i];
     }
 }
 
@@ -43,6 +31,7 @@ void permute() {
 float fade(float t) {
     return t * t * t * (t * (t * 6.0 - 15.0) + 10.0);
 }
+
 
 float grad(int hash, float x, float y) {
     int h = hash & 7;      
@@ -52,26 +41,7 @@ float grad(int hash, float x, float y) {
 }
 
 
-
 float noise(float x, float y) {
-    /*int X = int(floor(x)) & (gradientSizeTable - 1);
-    int Y = int(floor(y)) & (gradientSizeTable - 1);
-
-    x -= floor(x);
-    y -= floor(y);
-
-    float u = fade(x);
-    float v = fade(y);
-
-    int A = perm[X] + Y;
-    int B = perm[X + 1] + Y;
-
-    return mix(mix(grad(perm[A], x, y), grad(perm[B], x - 1, y), u), 
-                mix(grad(perm[A + 1], x, y - 1), grad(perm[B + 1], x - 1, y - 1), u), v);*/
-    
-    //float xin = x / float(size) - 0.5;
-    //float yin = y / float(size) - 0.5;
-    
     float F2 = 0.5 * (sqrt(3.0) - 1.0);
     float s = (x + y) * F2;
 
